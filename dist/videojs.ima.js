@@ -1150,17 +1150,17 @@ AdUi.prototype.setShowCountdown = function(showCountdownIn) {
 };
 
 var name = "videojs-ima";
-var version = "1.0.0";
+var version = "1.0.1";
 var license = "Apache-2.0";
 var main = "./dist/videojs.ima.js";
 var author = {"name":"Google Inc."};
 var engines = {"node":">=0.8.0"};
 var scripts = {"contBuild":"watch 'npm run rollup:max' src","devServer":"forever start ./node_modules/http-server/bin/http-server && npm run contBuild","postdevServer":"forever stop ./node_modules/http-server/bin/http-server","lint":"eslint \"src/*.js\"","rollup":"npm-run-all rollup:*","rollup:max":"rollup -c configs/rollup.config.js","rollup:min":"rollup -c configs/rollup.config.min.js","preversion":"npm run lint","version":"node scripts/version.js","postversion":"node scripts/postversion.js"};
 var repository = {"type":"git","url":"https://github.com/googleads/videojs-ima"};
-var files = ["CHANGELOG.md","LICENSE","README.md","dist/"];
+var files = ["CHANGELOG.md","LICENSE","README.md","dist/","src/"];
 var dependencies = {"video.js":">=5.19.2","videojs-contrib-ads":"~5.1.0"};
 var devDependencies = {"child_process":"^1.0.2","conventional-changelog-cli":"^1.3.5","conventional-changelog-videojs":"^3.0.0","eslint":"^4.11.0","eslint-config-google":"^0.9.1","eslint-plugin-jsdoc":"^3.2.0","forever":"^0.15.3","http-server":"^0.10.0","npm-run-all":"^4.1.2","path":"^0.12.7","rimraf":"^2.6.2","rollup":"^0.51.8","rollup-plugin-copy":"^0.2.3","rollup-plugin-json":"^2.3.0","rollup-plugin-uglify":"^2.0.1","uglify-es":"^3.1.10","watch":"^1.0.2"};
-var version$1 = {
+var pkg = {
 	name: name,
 	version: version,
 	license: license,
@@ -1358,7 +1358,7 @@ SdkImpl.prototype.initAdObjects = function() {
   }
 
   this.adsLoader.getSettings().setPlayerType('videojs-ima');
-  this.adsLoader.getSettings().setPlayerVersion(version$1);
+  this.adsLoader.getSettings().setPlayerVersion(pkg.version);
   this.adsLoader.getSettings().setAutoPlayAdBreaks(this.autoPlayAdBreaks);
 
   this.adsLoader.addEventListener(
