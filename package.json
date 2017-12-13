@@ -1,6 +1,6 @@
 {
   "name": "videojs-ima",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Apache-2.0",
   "main": "./dist/videojs.ima.js",
   "author": {
@@ -29,7 +29,8 @@
     "CHANGELOG.md",
     "LICENSE",
     "README.md",
-    "dist/"
+    "dist/",
+    "src/"
   ],
   "dependencies": {
     "video.js": ">=5.19.2",
