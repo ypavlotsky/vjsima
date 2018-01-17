@@ -1052,7 +1052,7 @@ AdUi.prototype.setShowCountdown = function (showCountdownIn) {
 };
 
 var name = "videojs-ima";
-var version = "1.0.3";
+var version = "1.0.4";
 var license = "Apache-2.0";
 var main = "./dist/videojs.ima.js";
 var author = { "name": "Google Inc." };
@@ -1062,6 +1062,7 @@ var repository = { "type": "git", "url": "https://github.com/googleads/videojs-i
 var files = ["CHANGELOG.md", "LICENSE", "README.md", "dist/", "src/"];
 var dependencies = { "video.js": ">=5.19.2", "videojs-contrib-ads": "~5.1.0" };
 var devDependencies = { "babel-core": "^6.26.0", "babel-preset-env": "^1.6.1", "child_process": "^1.0.2", "chromedriver": "^2.33.2", "conventional-changelog-cli": "^1.3.5", "conventional-changelog-videojs": "^3.0.0", "eslint": "^4.11.0", "eslint-config-google": "^0.9.1", "eslint-plugin-jsdoc": "^3.2.0", "forever": "^0.15.3", "http-server": "^0.10.0", "mocha": "^4.0.1", "npm-run-all": "^4.1.2", "path": "^0.12.7", "rimraf": "^2.6.2", "rollup": "^0.51.8", "rollup-plugin-babel": "^3.0.3", "rollup-plugin-copy": "^0.2.3", "rollup-plugin-json": "^2.3.0", "rollup-plugin-uglify": "^2.0.1", "selenium-webdriver": "^3.6.0", "uglify-es": "^3.1.10", "watch": "^1.0.2" };
+var keywords = ["videojs", "videojs-plugin"];
 var pkg = {
 	name: name,
 	version: version,
@@ -1073,7 +1074,8 @@ var pkg = {
 	repository: repository,
 	files: files,
 	dependencies: dependencies,
-	devDependencies: devDependencies
+	devDependencies: devDependencies,
+	keywords: keywords
 };
 
 /**
