@@ -69,7 +69,15 @@ var Ads = function() {
     }
   }
   this.player.ima(this.options);
-
+  this.player.ima.addContentAndAdsEndedListener( () => {
+      this.player.ima.setContentWithAdTag(
+          this.contents[1],
+          null,
+          false);
+      //this.player.poster(this.posters[1]);
+      this.player.ima.requestAds();
+      this.playlistItemClicked = true;
+  });
 }
 
 Ads.prototype.initFromStart = function() {
