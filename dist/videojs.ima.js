@@ -1052,16 +1052,17 @@ AdUi.prototype.setShowCountdown = function (showCountdownIn) {
 };
 
 var name = "videojs-ima";
-var version = "1.0.3";
+var version = "1.1.0";
 var license = "Apache-2.0";
 var main = "./dist/videojs.ima.js";
 var author = { "name": "Google Inc." };
 var engines = { "node": ">=0.8.0" };
-var scripts = { "contBuild": "watch 'npm run rollup:max' src", "devServer": "forever start ./node_modules/http-server/bin/http-server && npm run contBuild", "postdevServer": "forever stop ./node_modules/http-server/bin/http-server", "lint": "eslint \"src/*.js\"", "rollup": "npm-run-all rollup:*", "rollup:max": "rollup -c configs/rollup.config.js", "rollup:min": "rollup -c configs/rollup.config.min.js", "pretest": "npm run rollup", "test": "npm-run-all -p -r testServer webdriver", "testServer": "http-server", "preversion": "npm run lint", "version": "node scripts/version.js", "postversion": "node scripts/postversion.js", "webdriver": "mocha test/webdriver/*.js" };
+var scripts = { "contBuild": "watch 'npm run rollup:max' src", "devServer": "forever start ./node_modules/http-server/bin/http-server && npm run contBuild", "postdevServer": "forever stop ./node_modules/http-server/bin/http-server", "lint": "eslint \"src/*.js\"", "rollup": "npm-run-all rollup:*", "rollup:max": "rollup -c configs/rollup.config.js", "rollup:min": "rollup -c configs/rollup.config.min.js", "pretest": "npm run rollup", "test": "npm-run-all -p -r testServer webdriver", "testServer": "http-server --cors", "preversion": "node scripts/preversion.js && npm run lint && npm test", "version": "node scripts/version.js", "postversion": "node scripts/postversion.js", "webdriver": "mocha test/webdriver/*.js --no-timeouts" };
 var repository = { "type": "git", "url": "https://github.com/googleads/videojs-ima" };
 var files = ["CHANGELOG.md", "LICENSE", "README.md", "dist/", "src/"];
-var dependencies = { "video.js": ">=5.19.2", "videojs-contrib-ads": "~5.1.0" };
-var devDependencies = { "babel-core": "^6.26.0", "babel-preset-env": "^1.6.1", "child_process": "^1.0.2", "chromedriver": "^2.33.2", "conventional-changelog-cli": "^1.3.5", "conventional-changelog-videojs": "^3.0.0", "eslint": "^4.11.0", "eslint-config-google": "^0.9.1", "eslint-plugin-jsdoc": "^3.2.0", "forever": "^0.15.3", "http-server": "^0.10.0", "mocha": "^4.0.1", "npm-run-all": "^4.1.2", "path": "^0.12.7", "rimraf": "^2.6.2", "rollup": "^0.51.8", "rollup-plugin-babel": "^3.0.3", "rollup-plugin-copy": "^0.2.3", "rollup-plugin-json": "^2.3.0", "rollup-plugin-uglify": "^2.0.1", "selenium-webdriver": "^3.6.0", "uglify-es": "^3.1.10", "watch": "^1.0.2" };
+var dependencies = { "video.js": "^5.19.2", "videojs-contrib-ads": "^5.1.6" };
+var devDependencies = { "babel-core": "^6.26.0", "babel-preset-env": "^1.6.1", "child_process": "^1.0.2", "chromedriver": "^2.33.2", "conventional-changelog-cli": "^1.3.5", "conventional-changelog-videojs": "^3.0.0", "eslint": "^4.11.0", "eslint-config-google": "^0.9.1", "eslint-plugin-jsdoc": "^3.2.0", "forever": "^0.15.3", "geckodriver": "^1.10.0", "http-server": "^0.10.0", "mocha": "^4.0.1", "npm-run-all": "^4.1.2", "path": "^0.12.7", "rimraf": "^2.6.2", "rollup": "^0.51.8", "rollup-plugin-babel": "^3.0.3", "rollup-plugin-copy": "^0.2.3", "rollup-plugin-json": "^2.3.0", "rollup-plugin-uglify": "^2.0.1", "selenium-webdriver": "^3.6.0", "uglify-es": "^3.1.10", "watch": "^1.0.2" };
+var keywords = ["videojs", "videojs-plugin"];
 var pkg = {
 	name: name,
 	version: version,
@@ -1073,7 +1074,8 @@ var pkg = {
 	repository: repository,
 	files: files,
 	dependencies: dependencies,
-	devDependencies: devDependencies
+	devDependencies: devDependencies,
+	keywords: keywords
 };
 
 /**
@@ -1273,10 +1275,11 @@ SdkImpl.prototype.requestAds = function () {
   adsRequest.linearAdSlotWidth = this.controller.getPlayerWidth();
   adsRequest.linearAdSlotHeight = this.controller.getPlayerHeight();
   adsRequest.nonLinearAdSlotWidth = this.controller.getSettings().nonLinearWidth || this.controller.getPlayerWidth();
-  adsRequest.nonLinearAdSlotHeight = this.controller.getSettings().nonLinearHeight || this.controller.getPlayerHeight() / 3;
+  adsRequest.nonLinearAdSlotHeight = this.controller.getSettings().nonLinearHeight || this.controller.getPlayerHeight();
 
   adsRequest.setAdWillAutoPlay(this.controller.getSettings().adWillAutoPlay);
-  adsRequest.setAdWillPlayMuted(this.controller.getSettings().adWillPlayMuted);
+  var adWillPlayMuted = this.controller.getSettings().adWillPlayMuted !== undefined ? this.controller.getSettings().adWillPlayMuted : this.controller.getPlayerVolume() == 0;
+  adsRequest.setAdWillPlayMuted(adWillPlayMuted);
 
   this.adsLoader.requestAds(adsRequest);
 };
