@@ -1,6 +1,6 @@
 {
   "name": "videojs-ima",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "license": "Apache-2.0",
   "main": "./dist/videojs.ima.js",
   "author": {
@@ -19,11 +19,11 @@
     "rollup:min": "rollup -c configs/rollup.config.min.js",
     "pretest": "npm run rollup",
     "test": "npm-run-all -p -r testServer webdriver",
-    "testServer": "http-server",
-    "preversion": "npm run lint",
+    "testServer": "http-server --cors",
+    "preversion": "node scripts/preversion.js && npm run lint && npm test",
     "version": "node scripts/version.js",
     "postversion": "node scripts/postversion.js",
-    "webdriver": "mocha test/webdriver/*.js"
+    "webdriver": "mocha test/webdriver/*.js --no-timeouts"
   },
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
     "src/"
   ],
   "dependencies": {
-    "video.js": ">=5.19.2",
-    "videojs-contrib-ads": "~5.1.0"
+    "video.js": "^5.19.2",
+    "videojs-contrib-ads": "^5.1.6"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -51,6 +51,7 @@
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-jsdoc": "^3.2.0",
     "forever": "^0.15.3",
+    "geckodriver": "^1.10.0",
     "http-server": "^0.10.0",
     "mocha": "^4.0.1",
     "npm-run-all": "^4.1.2",
@@ -64,5 +65,9 @@
     "selenium-webdriver": "^3.6.0",
     "uglify-es": "^3.1.10",
     "watch": "^1.0.2"
-  }
+  },
+  "keywords": [
+    "videojs",
+    "videojs-plugin"
+  ]
 }
