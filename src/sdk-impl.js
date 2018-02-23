@@ -218,10 +218,14 @@ SdkImpl.prototype.requestAds = function() {
       this.controller.getPlayerWidth();
   adsRequest.nonLinearAdSlotHeight =
       this.controller.getSettings().nonLinearHeight ||
-      (this.controller.getPlayerHeight() / 3);
+      this.controller.getPlayerHeight();
 
   adsRequest.setAdWillAutoPlay(this.controller.getSettings().adWillAutoPlay);
-  adsRequest.setAdWillPlayMuted(this.controller.getSettings().adWillPlayMuted);
+  const adWillPlayMuted =
+      this.controller.getSettings().adWillPlayMuted !== undefined ?
+      this.controller.getSettings().adWillPlayMuted :
+      (this.controller.getPlayerVolume() == 0);
+  adsRequest.setAdWillPlayMuted(adWillPlayMuted);
 
   this.adsLoader.requestAds(adsRequest);
 };

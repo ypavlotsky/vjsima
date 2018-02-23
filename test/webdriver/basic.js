@@ -17,52 +17,113 @@
  * https://www.github.com/googleads/videojs-ima
  */
 
-var test = require('selenium-webdriver/testing');
+var browsers = require('./content/capabilities');
 
-test.describe( 'Basic Tests', function() {
+browsers.browsers.forEach(function(browser) {
 
-  this.timeout(10 * 1000);
+    describe('Basic Tests ' + browser.name, function() {
 
-  var webdriver = require('selenium-webdriver'),
-      until = webdriver.until;
-      By = webdriver.By;
+    this.timeout(0);
+    this.slow(15000);
 
-  const chromedriver = require('chromedriver');
-  const chromeCapabilities = webdriver.Capabilities.chrome();
-  chromeCapabilities.set('chromeOptions', {args: ['--headless']});
+    var webdriver = require('selenium-webdriver'),
+        until = webdriver.until;
+        By = webdriver.By;
 
-  var driver = new webdriver.Builder()
-      .forBrowser('chrome')
-      .withCapabilities(chromeCapabilities)
-      .build();
+    var driver;
 
-  test.after(function() {
-    driver.quit();
-  });
+    before(async function() {
+      driver = await new webdriver.Builder()
+            .forBrowser(browser.capabilities.browserName)
+            .usingServer(browser.server)
+            .withCapabilities(browser.capabilities)
+            .build();
+      return driver;
+    });
 
-  test.it( 'Displays ad UI', function(){ 
-    driver.get('http://localhost:8080/test/webdriver/index.html?ad=0');
-    driver.findElement(By.id('content_video')).click();
-    driver.wait(until.elementLocated(
-      By.id('content_video_ima-controls-div')), 10000);
-    driver.wait(until.elementIsVisible(driver.findElement(
-      By.id('content_video_ima-controls-div'))), 10000);
-    driver.sleep();
-  });
+    after(async function() {
+      await driver.quit();
+    });
 
-  test.it( 'Displays skippable ad UI', function(){ 
-    driver.get('http://localhost:8080/test/webdriver/index.html?ad=1');
-    driver.findElement(By.id('content_video')).click();
-    driver.wait(until.elementLocated(
-      By.id('content_video_ima-controls-div')), 10000);
-    driver.wait(until.elementIsVisible(driver.findElement(
-      By.id('content_video_ima-controls-div'))), 10000);
-    driver.sleep();
-  });
-  test.it( 'Handles ad error: wrappers', function(){ 
-    driver.get('http://localhost:8080/test/webdriver/index.html?ad=2');
-    let log = driver.findElement(By.id('log'));
-    driver.wait(until.elementTextContains(log, '303'), 10000);
-    driver.sleep();
+    it( 'Displays ad UI ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=linear');
+      await driver.findElement(By.id('content_video')).click();
+      let log = await driver.findElement(By.id('log'));
+      await driver.wait(until.elementTextContains(log, 'start'), 10000);
+      await driver.wait(until.elementIsVisible(driver.findElement(
+        By.id('content_video_ima-controls-div'))), 10000);
+    });
+
+    it( 'Hides controls when ad ends ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=linear');
+      await driver.findElement(By.id('content_video')).click();
+      let log = await driver.findElement(By.id('log'));
+      await driver.wait(until.elementTextContains(log, 'start'), 10000);
+      await driver.wait(until.elementIsNotVisible(driver.findElement(
+        By.id('content_video_ima-controls-div'))), 14000);
+      await driver.sleep();
+    });
+
+    it( 'Plays content when ad ends ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=linear');
+      await driver.findElement(By.id('content_video')).click();
+      let log = await driver.findElement(By.id('log'));
+      await driver.wait(until.elementTextContains(log, 'start'), 10000);
+      await driver.wait(until.elementIsNotVisible(driver.findElement(
+        By.id('content_video_ima-controls-div'))), 14000);
+      await driver.wait(until.elementTextContains(log, 'playing'), 10000);
+      await driver.sleep();
+    });
+
+    it( 'Displays skip ad button ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=skippable');
+      await driver.findElement(By.id('content_video')).click();
+      let log = driver.findElement(By.id('log'));
+      await driver.wait(until.elementTextContains(log, 'start'), 10000);
+      await driver.sleep(6000);
+      await driver.switchTo().frame(driver.findElement(
+        By.css('#content_video_ima-ad-container > div:nth-child(1) > iframe')));
+      let skipButton = await driver.findElement(
+        By.css('body > div.videoAdUi > div.videoAdUiSkipContainer.html5-stop-propagation > button'));
+      await driver.wait(until.elementIsVisible(skipButton), 10000);
+      await driver.sleep();
+    });
+
+     it( 'VMAP: Preroll ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=vmap_preroll');
+      await driver.findElement(By.id('content_video')).click();
+      let log = await driver.findElement(By.id('log'));
+      await driver.wait(until.elementTextContains(log, 'start'), 10000);
+      await driver.wait(until.elementIsVisible(driver.findElement(
+        By.id('content_video_ima-controls-div'))), 10000);
+      await driver.sleep();
+    });
+
+    it( 'VMAP: Midroll ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=vmap_midroll');
+      await driver.findElement(By.id('content_video')).click();
+      await driver.wait(until.elementIsVisible(driver.findElement(
+        By.id('content_video_ima-controls-div'))), 10000);
+      await driver.sleep();
+    });
+
+    it( 'Nonlinear ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=nonlinear');
+      await driver.findElement(By.id('content_video')).click();
+      let log = await driver.findElement(By.id('log'));
+      await driver.wait(until.elementTextContains(log, 'start'), 10000);
+      await driver.switchTo().frame(driver.findElement(
+        By.css('#content_video_ima-ad-container > div:nth-child(1) > iframe')));
+      await driver.wait(until.elementIsVisible(driver.findElement(
+        By.id('GDFP'))), 10000);
+      await driver.sleep();
+    });
+
+    it( 'Handles ad error 303: wrappers ' + browser.name, async function(){
+      await driver.get('http://localhost:8080/test/webdriver/index.html?ad=error_303');
+      let log = await driver.findElement(By.id('log'));
+      await driver.wait(until.elementTextContains(log, '303'), 10000);
+      await driver.sleep();
+    });
   });
 });
